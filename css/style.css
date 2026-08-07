@@ -123,6 +123,16 @@ body {
     color: rgba(255, 255, 255, 0.65);
     letter-spacing: 0.02em;
     z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.world-brand-sub {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.03em;
 }
 
 .world-hud {

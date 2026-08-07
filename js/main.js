@@ -58,7 +58,7 @@ function renderWorld() {
     screen.innerHTML = `
         <div class="world">
             <div class="world-sky">${renderStars()}${renderSparkles()}</div>
-            <div class="world-brand">✨ Nervous System Reset</div>
+            <div class="world-brand">✨ Get Aura<span class="world-brand-sub">anxiety slay game</span></div>
             <div class="world-hud" id="hud-mount">${renderHud(state)}</div>
             ${renderCompanion(state)}
             <div class="world-places">${renderPlaceNodes()}</div>
