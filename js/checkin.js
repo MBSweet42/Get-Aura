@@ -19,7 +19,7 @@ export function openCheckIn(backdrop, onDone) {
             <div style="text-align:center;color:var(--text-secondary);font-size:14px;" id="ci-label">${LABELS[value]}</div>
             <input type="range" min="1" max="10" step="1" value="${value}" class="checkin-slider" id="ci-slider" />
             <div class="checkin-scale"><span>Settled</span><span>Spiraling</span></div>
-            <button class="btn btn-primary btn-block" id="ci-submit">Log Check-In</button>
+            <button class="btn btn-primary btn-block" id="ci-submit">Collect my daily spark ✨</button>
             <button class="btn btn-ghost btn-block" id="ci-cancel">Cancel</button>
         </div>
     `;

@@ -15,11 +15,18 @@ function breatheSpeed(threatLevel) {
     return Math.max(1.1, 3 - (threatLevel / 100) * 1.8);
 }
 
+function isToday(dateKey) {
+    return !!dateKey && dateKey === new Date().toISOString().slice(0, 10);
+}
+
 function speechFor(state, mood) {
     if (state.questsCompleted === 0 && !state.lastCheckInDate) {
-        return "I'm however you're feeling. Tap me and let's check in.";
+        return "I'm however you're feeling. Tap me to collect your daily spark ✨";
     }
-    return `${mood.label} — tap me to check in`;
+    if (isToday(state.lastCheckInDate)) {
+        return `${mood.label} — today's spark is collected ✨`;
+    }
+    return `${mood.label} — tap me for your daily spark ✨`;
 }
 
 export function renderCompanion(state) {

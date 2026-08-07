@@ -9,10 +9,11 @@ import { openReflection } from './reflection.js';
 import { openCreatureDialogue } from './creatureDialogue.js';
 import { openItemDiscovery } from './itemDiscovery.js';
 import { openDisclaimer } from './disclaimer.js';
+import { celebrate } from './celebrate.js';
 import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
-import { renderGround, renderPlaceNodes, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
+import { renderGround, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
 import { showToast } from './toast.js';
 
 const backdrop = document.getElementById('modal-backdrop');
@@ -57,7 +58,6 @@ function renderWorld() {
             <div class="world-brand">✨ Get Aura<span class="world-brand-sub">anxiety slay game</span></div>
             <div class="world-hud" id="hud-mount">${renderHud(state)}</div>
             ${renderCompanion(state)}
-            <div class="world-places">${renderPlaceNodes()}</div>
         </div>
     `;
 
@@ -144,6 +144,7 @@ function renderResetContent() {
     mountTool(selectedTool, document.getElementById('tool-mount'), () => {
         const reward = tool.reward;
         const { newItem } = completeQuest({ ...reward, activity: tool.id });
+        celebrate();
 
         if (newItem) {
             setTimeout(() => openItemDiscovery(newItem, reward, backdrop, () => openReflection(backdrop, () => render())), 400);
@@ -252,7 +253,7 @@ function renderProgressContent() {
             }
         </div>
         <div class="card">
-            <h2>Calm history (last 14 check-ins)</h2>
+            <h2>Calm history (last 14 sparks)</h2>
             ${renderHistory(state)}
         </div>
         <div class="card">

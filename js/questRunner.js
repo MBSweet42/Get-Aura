@@ -3,6 +3,7 @@ import { tierLabel } from './quests.js';
 import { showToast } from './toast.js';
 import { openReflection } from './reflection.js';
 import { openItemDiscovery } from './itemDiscovery.js';
+import { celebrate } from './celebrate.js';
 
 let timerHandle = null;
 
@@ -99,6 +100,7 @@ export function openQuestRunner(quest, backdrop, onClose) {
         if (completed) {
             const reward = { threatRelief: quest.threatRelief, calmGain: quest.calmGain, xpGain: quest.xpGain };
             const { newItem } = completeQuest({ ...reward, activity: quest.id });
+            celebrate();
 
             if (newItem) {
                 setTimeout(
