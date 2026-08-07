@@ -1,3 +1,5 @@
+import { totalItemCount } from './items.js';
+
 const THREAT_STOPS = [
     { at: 0, color: '#0ca30c' },
     { at: 33, color: '#fab219' },
@@ -68,6 +70,10 @@ export function renderHud(state) {
             <span>🔥</span>
             <span id="hud-streak">${state.streak}</span>
         </div>
+        <div class="hud-pill" title="Cozy Den collection">
+            <span>🎒</span>
+            <span id="hud-collection">${state.collection.length}/${totalItemCount()}</span>
+        </div>
     `;
 }
 
@@ -83,4 +89,7 @@ export function updateHud(state) {
 
     const streakEl = document.getElementById('hud-streak');
     if (streakEl) streakEl.textContent = state.streak;
+
+    const collectionEl = document.getElementById('hud-collection');
+    if (collectionEl) collectionEl.textContent = `${state.collection.length}/${totalItemCount()}`;
 }

@@ -1,3 +1,5 @@
+import { itemFor } from './items.js';
+
 const STORAGE_KEY = 'nsr_state_v1';
 
 const SOUNDSCAPES = [
@@ -23,6 +25,8 @@ function defaultState() {
         lastQuestCompleteDate: null,
         questsCompleted: 0,
         history: [], // { date, threatLevel, calmHP, activity, effect }
+        collection: [],
+        careFocus: null,
         squad: [
             { id: 'sam', name: 'Sam', emoji: '🦊', status: 'Green — Rest & Digest' },
             { id: 'priya', name: 'Priya', emoji: '🦋', status: 'Yellow — A little wound up' },
@@ -99,6 +103,11 @@ export function completeQuest({ threatRelief, calmGain, xpGain, activity }) {
         { date: today, threatLevel: state.threatLevel, calmHP: state.calmHP, activity: activity || null, effect: null },
     ].slice(-60);
 
+    const item = itemFor(activity);
+    const alreadyHave = item && state.collection.includes(activity);
+    const newItem = item && !alreadyHave ? item : null;
+    const collection = newItem ? [...state.collection, activity] : state.collection;
+
     state = {
         ...state,
         threatLevel: clamp(state.threatLevel - threatRelief, 0, 100),
@@ -109,7 +118,15 @@ export function completeQuest({ threatRelief, calmGain, xpGain, activity }) {
         lastQuestCompleteDate: today,
         questsCompleted: state.questsCompleted + 1,
         history,
+        collection,
     };
+    notify();
+
+    return { newItem };
+}
+
+export function setCareFocus(focusId) {
+    state = { ...state, careFocus: focusId };
     notify();
 }
 

@@ -596,6 +596,80 @@ body {
     color: var(--text-secondary);
 }
 
+/* ---------- Item discovery ---------- */
+
+.discovery-eyebrow {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-violet);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.discovery-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px auto;
+}
+
+.discovery-emoji {
+    font-size: 64px;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    animation: discovery-pop 500ms ease;
+}
+
+@keyframes discovery-pop {
+    0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ---------- Cozy Den ---------- */
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.item-slot {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface-card-raised);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 4px;
+    text-align: center;
+}
+
+.item-slot .item-emoji {
+    font-size: 24px;
+    opacity: 0.3;
+}
+
+.item-slot.owned {
+    background: color-mix(in srgb, var(--accent-violet) 16%, var(--surface-card-raised));
+    border-color: color-mix(in srgb, var(--accent-violet) 45%, transparent);
+}
+
+.item-slot.owned .item-emoji {
+    opacity: 1;
+}
+
+.item-name {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.15;
+}
+
 /* ---------- Toast ---------- */
 
 .toast {

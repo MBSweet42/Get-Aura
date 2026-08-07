@@ -1,11 +1,13 @@
-import { getState, subscribe, completeQuest, xpProgress, unlockedSoundscapes, allSoundscapes } from './state.js';
+import { getState, subscribe, completeQuest, setCareFocus, xpProgress, unlockedSoundscapes, allSoundscapes } from './state.js';
 import { renderMeters, renderHud, updateHud } from './meters.js';
 import { renderCompanion, updateCompanion } from './companion.js';
 import { renderStreak, renderHistory } from './streak.js';
 import { QUESTS, suggestedQuest, questById, tierGlow } from './quests.js';
+import { ITEMS, totalItemCount, CARE_FOCUS_OPTIONS, careFocusById } from './items.js';
 import { openCheckIn } from './checkin.js';
 import { openReflection } from './reflection.js';
 import { openCreatureDialogue } from './creatureDialogue.js';
+import { openItemDiscovery } from './itemDiscovery.js';
 import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
@@ -140,9 +142,14 @@ function renderResetContent() {
 
     mountTool(selectedTool, document.getElementById('tool-mount'), () => {
         const reward = tool.reward;
-        completeQuest({ ...reward, activity: tool.id });
-        showToast(`Nice reset — Threat −${reward.threatRelief}, Calm +${reward.calmGain}, XP +${reward.xpGain}`);
-        setTimeout(() => openReflection(backdrop, () => render()), 400);
+        const { newItem } = completeQuest({ ...reward, activity: tool.id });
+
+        if (newItem) {
+            setTimeout(() => openItemDiscovery(newItem, reward, backdrop, () => openReflection(backdrop, () => render())), 400);
+        } else {
+            showToast(`Nice reset — Threat −${reward.threatRelief}, Calm +${reward.calmGain}, XP +${reward.xpGain}`);
+            setTimeout(() => openReflection(backdrop, () => render()), 400);
+        }
     });
 }
 
@@ -203,6 +210,39 @@ function renderProgressContent() {
             </div>
         </div>
         <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                <h2 style="margin:0;">Cozy Den</h2>
+                <span class="meter-label">${state.collection.length} / ${totalItemCount()}</span>
+            </div>
+            <p class="quest-desc">Every technique leaves something behind. Collect them all.</p>
+            <div class="item-grid">
+                ${Object.entries(ITEMS)
+                    .map(([activityId, item]) => {
+                        const owned = state.collection.includes(activityId);
+                        return `
+                        <div class="item-slot ${owned ? 'owned' : ''}" title="${owned ? item.name : 'Not found yet'}">
+                            <span class="item-emoji">${owned ? item.emoji : '❔'}</span>
+                            ${owned ? `<span class="item-name">${item.name}</span>` : ''}
+                        </div>
+                    `;
+                    })
+                    .join('')}
+            </div>
+        </div>
+        <div class="card">
+            <h2>What are you working on?</h2>
+            <p class="quest-desc">${
+                state.careFocus
+                    ? `Right now: ${careFocusById(state.careFocus)?.label}`
+                    : "Pick a focus — it's just for you, and you can change it anytime."
+            }</p>
+            <div class="tool-picker">
+                ${CARE_FOCUS_OPTIONS.map(
+                    (f) => `<button class="tool-chip ${state.careFocus === f.id ? 'active' : ''}" data-focus="${f.id}">${f.emoji} ${f.label}</button>`
+                ).join('')}
+            </div>
+        </div>
+        <div class="card">
             <h2>What's actually helping</h2>
             ${
                 insight
@@ -231,6 +271,13 @@ function renderProgressContent() {
     `;
 
     renderMeters(document.getElementById('meters-mount'), state);
+
+    sheet.querySelectorAll('[data-focus]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            setCareFocus(btn.dataset.focus);
+            renderProgressContent();
+        });
+    });
 
     sheet.querySelectorAll('[data-sound]').forEach((btn) => {
         btn.addEventListener('click', () => {

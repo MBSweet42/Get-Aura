@@ -2,6 +2,7 @@ import { completeQuest } from './state.js';
 import { tierLabel } from './quests.js';
 import { showToast } from './toast.js';
 import { openReflection } from './reflection.js';
+import { openItemDiscovery } from './itemDiscovery.js';
 
 let timerHandle = null;
 
@@ -96,14 +97,18 @@ export function openQuestRunner(quest, backdrop, onClose) {
         backdrop.classList.remove('active');
         backdrop.innerHTML = '';
         if (completed) {
-            completeQuest({
-                threatRelief: quest.threatRelief,
-                calmGain: quest.calmGain,
-                xpGain: quest.xpGain,
-                activity: quest.id,
-            });
-            showToast(`Quest complete — Threat −${quest.threatRelief}, Calm +${quest.calmGain}, XP +${quest.xpGain}`);
-            setTimeout(() => openReflection(backdrop, () => onClose(completed)), 400);
+            const reward = { threatRelief: quest.threatRelief, calmGain: quest.calmGain, xpGain: quest.xpGain };
+            const { newItem } = completeQuest({ ...reward, activity: quest.id });
+
+            if (newItem) {
+                setTimeout(
+                    () => openItemDiscovery(newItem, reward, backdrop, () => openReflection(backdrop, () => onClose(completed))),
+                    400
+                );
+            } else {
+                showToast(`Quest complete — Threat −${quest.threatRelief}, Calm +${quest.calmGain}, XP +${quest.xpGain}`);
+                setTimeout(() => openReflection(backdrop, () => onClose(completed)), 400);
+            }
         } else {
             onClose(completed);
         }
