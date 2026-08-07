@@ -2,10 +2,10 @@ import { getState, subscribe, completeQuest, xpProgress, unlockedSoundscapes, al
 import { renderMeters, renderHud, updateHud } from './meters.js';
 import { renderCompanion, updateCompanion } from './companion.js';
 import { renderStreak, renderHistory } from './streak.js';
-import { suggestedQuest, tierLabel, questsByTier, questById } from './quests.js';
-import { openQuestRunner } from './questRunner.js';
+import { QUESTS, suggestedQuest, questById, tierGlow } from './quests.js';
 import { openCheckIn } from './checkin.js';
 import { openReflection } from './reflection.js';
+import { openCreatureDialogue } from './creatureDialogue.js';
 import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
@@ -28,27 +28,19 @@ function placeHeader(id) {
     `;
 }
 
-function questCardHTML(quest) {
-    return `
-        <div class="quest-card" data-quest-id="${quest.id}">
-            <span class="quest-tier ${quest.tier}">${tierLabel(quest.tier)}</span>
-            <p class="quest-title">${quest.title}</p>
-            <p class="quest-desc">${quest.desc}</p>
-            <span class="quest-meta">−${quest.threatRelief} Threat · +${quest.calmGain} Calm · +${quest.xpGain} XP</span>
-            <span class="quest-cta">Tap to start →</span>
-        </div>
-    `;
-}
+const GROVE_POSITIONS = [
+    { x: 18, y: 12 }, { x: 55, y: 9 }, { x: 84, y: 22 }, { x: 14, y: 44 },
+    { x: 48, y: 40 }, { x: 80, y: 50 }, { x: 28, y: 72 }, { x: 66, y: 78 },
+];
 
-function wireQuestCards(root) {
-    root.querySelectorAll('.quest-card').forEach((card) => {
-        card.addEventListener('click', () => {
-            const quest = [...questsByTier('common'), ...questsByTier('rare'), ...questsByTier('boss')]
-                .find((q) => q.id === card.dataset.questId);
-            if (!quest) return;
-            openQuestRunner(quest, backdrop, () => render());
-        });
-    });
+function creatureNodeHTML(quest, index) {
+    const pos = GROVE_POSITIONS[index % GROVE_POSITIONS.length];
+    return `
+        <button class="place-node" data-quest="${quest.id}" style="left:${pos.x}%; top:${pos.y}%; animation-delay:${(index * 0.3).toFixed(1)}s; --place-glow:${tierGlow(quest.tier)};">
+            <span class="place-orb">${quest.creature}</span>
+            <span class="place-label">${quest.creatureName}</span>
+        </button>
+    `;
 }
 
 function renderWorld() {
@@ -70,7 +62,7 @@ function renderWorld() {
             render();
             if (submitted) {
                 const quest = suggestedQuest(getState().threatLevel);
-                setTimeout(() => openQuestRunner(quest, backdrop, () => render()), 250);
+                setTimeout(() => openCreatureDialogue(quest, backdrop, () => render()), 250);
             }
         });
     });
@@ -85,28 +77,22 @@ function refreshWorldDynamic() {
 }
 
 function renderQuestsContent() {
-    const tiers = [
-        { id: 'common', label: 'Common Quests' },
-        { id: 'rare', label: 'Rare Quests' },
-        { id: 'boss', label: 'Boss Battles' },
-    ];
-
-    sheet.innerHTML =
-        placeHeader('quests') +
-        tiers
-            .map(
-                (tier) => `
-        <div class="card">
-            <h2>${tier.label}</h2>
-            <div class="quest-list">
-                ${questsByTier(tier.id).map(questCardHTML).join('')}
-            </div>
+    sheet.innerHTML = `
+        ${placeHeader('quests')}
+        <p class="quest-desc" style="text-align:center;">Each creature here knows one trick. Tap one to learn it.</p>
+        <div class="grove">
+            <div class="world-sky">${renderSparkles(10)}</div>
+            ${QUESTS.map(creatureNodeHTML).join('')}
         </div>
-    `
-            )
-            .join('');
+    `;
 
-    wireQuestCards(sheet);
+    sheet.querySelectorAll('[data-quest]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const quest = questById(btn.dataset.quest);
+            if (!quest) return;
+            openCreatureDialogue(quest, backdrop, () => render());
+        });
+    });
 }
 
 let selectedTool = 'pattern-break';

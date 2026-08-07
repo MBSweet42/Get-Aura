@@ -9,6 +9,9 @@ export const QUESTS = [
         tier: 'common',
         title: 'Vagus Vibe Check',
         desc: 'Hum your favorite tune like a low-frequency bee. The vibration stimulates your vagus nerve and triggers your relaxation response.',
+        creature: '🐝',
+        creatureName: 'Buzz',
+        creatureLine: 'hums low, waiting for you to join in',
         threatRelief: 10,
         calmGain: 8,
         xpGain: 10,
@@ -19,6 +22,9 @@ export const QUESTS = [
         tier: 'common',
         title: 'Physiological Sigh',
         desc: 'Two quick inhales through the nose, one long exhale through the mouth. The fastest known way to calm your nervous system.',
+        creature: '🌬️',
+        creatureName: 'Zephyr',
+        creatureLine: 'breathes slow, showing you the rhythm',
         threatRelief: 12,
         calmGain: 8,
         xpGain: 10,
@@ -29,6 +35,9 @@ export const QUESTS = [
         tier: 'common',
         title: 'Cold Water Reset',
         desc: 'Cold on the face triggers the mammalian dive reflex, slowing your heart rate almost immediately.',
+        creature: '❄️',
+        creatureName: 'Frost',
+        creatureLine: 'sparkles, ready to snap you awake',
         threatRelief: 12,
         calmGain: 8,
         xpGain: 10,
@@ -39,6 +48,9 @@ export const QUESTS = [
         tier: 'common',
         title: 'Gargle Reset',
         desc: 'Vigorous gargling activates the same throat muscles that connect to your vagus nerve.',
+        creature: '🐸',
+        creatureName: 'Ribbit',
+        creatureLine: 'croaks a silly greeting',
         threatRelief: 10,
         calmGain: 8,
         xpGain: 10,
@@ -51,6 +63,9 @@ export const QUESTS = [
         tier: 'rare',
         title: 'The Glitch Hunt',
         desc: 'Anxiety time-travels into future worries. This forces your brain to register: right now, in this exact room, I am safe.',
+        creature: '👁️',
+        creatureName: 'Pixel',
+        creatureLine: 'blinks, scanning the room with you',
         threatRelief: 18,
         calmGain: 14,
         xpGain: 18,
@@ -67,6 +82,9 @@ export const QUESTS = [
         tier: 'rare',
         title: 'Orienting Scan',
         desc: 'Slowly turning your head to take in your surroundings tells your brainstem the threat has passed.',
+        creature: '🦉',
+        creatureName: 'Hoot',
+        creatureLine: 'turns a slow, watchful head',
         threatRelief: 16,
         calmGain: 12,
         xpGain: 16,
@@ -83,6 +101,9 @@ export const QUESTS = [
         tier: 'boss',
         title: 'The Shake-Off',
         desc: 'Anxiety stores adrenaline as muscle bracing. Tensing hard and dropping like a ragdoll discharges it fast.',
+        creature: '⚡',
+        creatureName: 'Zap',
+        creatureLine: 'crackles with restless energy',
         threatRelief: 28,
         calmGain: 20,
         xpGain: 28,
@@ -93,6 +114,9 @@ export const QUESTS = [
         tier: 'boss',
         title: 'Progressive Muscle Relaxation',
         desc: 'Squeeze each muscle group tight, then let go completely. It signals to your brain that the "threat" has been fought or fled.',
+        creature: '🍃',
+        creatureName: 'Willow',
+        creatureLine: 'sways, patient and unhurried',
         threatRelief: 30,
         calmGain: 22,
         xpGain: 30,
@@ -129,4 +153,8 @@ export function questById(id) {
 
 export function tierLabel(tier) {
     return { common: 'Common Quest', rare: 'Rare Quest', boss: 'Boss Battle' }[tier];
+}
+
+export function tierGlow(tier) {
+    return { common: '#0ca30c', rare: '#3987e5', boss: '#e66767' }[tier];
 }
