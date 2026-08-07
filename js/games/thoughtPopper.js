@@ -14,6 +14,7 @@ const THOUGHTS = [
 const TARGET_POPS = 12;
 const WIDTH = 300;
 const HEIGHT = 420;
+const MAX_CONCURRENT = 5;
 
 function createSceneClass(Phaser, onComplete) {
     return class ThoughtPopperScene extends Phaser.Scene {
@@ -43,11 +44,16 @@ function createSceneClass(Phaser, onComplete) {
         }
 
         spawnBubble() {
-            if (this.completed) return;
-            const text = THOUGHTS[Math.floor(Math.random() * THOUGHTS.length)];
-            const x = 55 + Math.random() * (WIDTH - 110);
-            const y = HEIGHT + 30;
+            if (this.completed || this.bubbles.length >= MAX_CONCURRENT) return;
+
+            const visibleTexts = new Set(this.bubbles.map((b) => b.text));
+            const available = THOUGHTS.filter((t) => !visibleTexts.has(t));
+            const pool = available.length > 0 ? available : THOUGHTS;
+            const text = pool[Math.floor(Math.random() * pool.length)];
+
             const radius = 44 + Math.random() * 14;
+            const x = this.findSpawnX(radius);
+            const y = HEIGHT + 30;
 
             const container = this.add.container(x, y);
             const circle = this.add.circle(0, 0, radius, 0x3987e5, 0.22);
@@ -67,8 +73,23 @@ function createSceneClass(Phaser, onComplete) {
             container.setInteractive(new Phaser.Geom.Circle(0, 0, radius), Phaser.Geom.Circle.Contains);
             container.on('pointerdown', () => this.pop(container));
 
-            const vy = 18 + Math.random() * 10;
-            this.bubbles.push({ container, vy });
+            const vy = 26 + Math.random() * 14;
+            this.bubbles.push({ container, vy, text });
+        }
+
+        findSpawnX(radius) {
+            let best = 55 + Math.random() * (WIDTH - 110);
+            let bestClearance = -Infinity;
+            for (let i = 0; i < 6; i++) {
+                const candidate = 55 + Math.random() * (WIDTH - 110);
+                const closest = this.bubbles.reduce((min, b) => Math.min(min, Math.abs(b.container.x - candidate)), Infinity);
+                if (closest > bestClearance) {
+                    bestClearance = closest;
+                    best = candidate;
+                }
+                if (closest >= radius * 1.8) break;
+            }
+            return best;
         }
 
         pop(container) {
