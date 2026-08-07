@@ -47,8 +47,164 @@ body {
 }
 
 #screen-map {
+    display: none;
     flex: 1;
     height: 100%;
+}
+
+#screen-map.active {
+    display: block;
+}
+
+/* ---------- Place scenes (full-screen) ---------- */
+
+#screen-place {
+    display: none;
+    flex: 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#screen-place.active {
+    display: block;
+}
+
+.scene-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 38vh;
+    overflow: hidden;
+}
+
+.scene-backdrop svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.scene-back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 6;
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(20, 14, 45, 0.55);
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.scene-panel {
+    position: absolute;
+    top: calc(38vh - 24px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(190deg, rgba(58, 45, 110, 0.97), rgba(21, 16, 56, 0.98));
+    border-radius: 28px 28px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    overflow-y: auto;
+    padding: 20px 20px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.scene-panel > * {
+    flex-shrink: 0;
+}
+
+/* ---------- Scene transitions ---------- */
+
+.scene-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    pointer-events: none;
+}
+
+.scene-transition-mist {
+    background: radial-gradient(circle at 30% 40%, rgba(235, 247, 250, 0.97), rgba(190, 220, 232, 0.92) 45%, rgba(150, 190, 205, 0.88) 100%);
+    animation: mist-wash 750ms ease;
+}
+
+@keyframes mist-wash {
+    0% { opacity: 0; }
+    45% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.scene-transition-firelight {
+    background: radial-gradient(circle at 50% 68%, rgba(255, 178, 71, 0.97), rgba(180, 90, 30, 0.9) 50%, rgba(20, 12, 8, 0.94) 100%);
+    animation: fire-flash 650ms ease;
+}
+
+@keyframes fire-flash {
+    0% { opacity: 0; }
+    40% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.scene-transition-door {
+    background: #0c0a1c;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 900px;
+    animation: door-fade 750ms ease;
+}
+
+@keyframes door-fade {
+    0% { opacity: 0; }
+    40% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.door-panel {
+    width: 130px;
+    height: 190px;
+    background: linear-gradient(160deg, #7a5a3a, #5c3f28);
+    border-radius: 65px 65px 10px 10px;
+    border: 4px solid #4a3220;
+    animation: door-swing 750ms ease;
+}
+
+@keyframes door-swing {
+    0% { transform: scale(0.2) rotateY(0deg); opacity: 0; }
+    45% { transform: scale(1.15) rotateY(20deg); opacity: 1; }
+    100% { transform: scale(3.2) rotateY(0deg); opacity: 0; }
+}
+
+.scene-transition-leaves {
+    overflow: hidden;
+}
+
+.leaf-piece {
+    position: absolute;
+    top: calc(var(--i) * 16%);
+    left: -60px;
+    width: 46px;
+    height: 28px;
+    background: #5c8a5f;
+    border-radius: 0 100% 0 100%;
+    opacity: 0;
+    animation: leaf-sweep 800ms ease-in both;
+    animation-delay: calc(var(--i) * 45ms);
+}
+
+@keyframes leaf-sweep {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    15% { opacity: 0.95; }
+    100% { transform: translate(480px, 60px) rotate(340deg); opacity: 0; }
 }
 
 /* ---------- Cards ---------- */
@@ -895,47 +1051,7 @@ body {
     transform: scale(0.95);
 }
 
-/* ---------- Place drawer (opens over the world) ---------- */
-
-.place-drawer {
-    position: fixed;
-    inset: 0;
-    background: rgba(9, 7, 22, 0.6);
-    backdrop-filter: blur(3px);
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 45;
-}
-
-.place-drawer.active {
-    display: flex;
-}
-
-.place-drawer-sheet {
-    width: 100%;
-    max-width: 480px;
-    max-height: 88vh;
-    overflow-y: auto;
-    background: linear-gradient(190deg, rgba(58, 45, 110, 0.97), rgba(21, 16, 56, 0.98));
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-bottom: none;
-    border-top: 2px solid color-mix(in srgb, var(--place-glow, var(--accent-blue)) 60%, transparent);
-    border-radius: 28px 28px 0 0;
-    box-shadow:
-        0 -20px 60px rgba(0, 0, 0, 0.5),
-        0 0 70px color-mix(in srgb, var(--place-glow, var(--accent-blue)) 22%, transparent);
-    padding: 20px 20px 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    animation: drawer-up 280ms ease;
-}
-
-@keyframes drawer-up {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+/* ---------- Scene panel header ---------- */
 
 .place-drawer-header {
     display: flex;
@@ -964,18 +1080,4 @@ body {
     font-weight: 700;
     color: #ffffff;
     margin: 0;
-}
-
-.place-drawer-close {
-    margin-left: auto;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    font-size: 15px;
-    line-height: 1;
-    cursor: pointer;
-    flex-shrink: 0;
 }

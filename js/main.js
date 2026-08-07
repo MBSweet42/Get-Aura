@@ -14,11 +14,17 @@ import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
 import { renderGround, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
+import { renderSceneBackdrop } from './scenery.js';
+import { playTransition, transitionForPlace } from './transitions.js';
 import { showToast } from './toast.js';
 
 const backdrop = document.getElementById('modal-backdrop');
-const drawer = document.getElementById('place-drawer');
-const sheet = document.getElementById('place-drawer-sheet');
+const screenMap = document.getElementById('screen-map');
+const screenPlace = document.getElementById('screen-place');
+const sceneBackdrop = document.getElementById('scene-backdrop');
+const scenePanel = document.getElementById('scene-panel');
+const sceneBack = document.getElementById('scene-back');
+const sheet = scenePanel;
 let openPlaceId = null;
 
 function placeHeader(id) {
@@ -27,7 +33,6 @@ function placeHeader(id) {
         <div class="place-drawer-header" style="--place-glow:${place.glow};">
             <span class="place-drawer-icon">${place.icon}</span>
             <h2 class="place-drawer-title">${place.label}</h2>
-            <button class="place-drawer-close" id="drawer-close" aria-label="Close">✕</button>
         </div>
     `;
 }
@@ -71,7 +76,7 @@ function renderWorld() {
         });
     });
 
-    wireMapNodes(screen, (id) => openPlace(id));
+    wireMapNodes(screen, (id) => openPlaceScene(id));
 }
 
 function refreshWorldDynamic() {
@@ -298,30 +303,40 @@ function render() {
     if (openPlaceId === 'progress') renderProgressContent();
 }
 
-function openPlace(id) {
-    openPlaceId = id;
+function openPlaceScene(id) {
+    if (openPlaceId) return;
 
-    if (id === 'quests') renderQuestsContent();
-    if (id === 'reset') renderResetContent();
-    if (id === 'squad') renderSquadContent();
-    if (id === 'progress') renderProgressContent();
+    playTransition(transitionForPlace(id), () => {
+        openPlaceId = id;
+        sceneBackdrop.innerHTML = renderSceneBackdrop(id);
+        screenMap.classList.remove('active');
+        screenPlace.classList.add('active');
 
-    drawer.classList.add('active');
+        if (id === 'quests') renderQuestsContent();
+        if (id === 'reset') renderResetContent();
+        if (id === 'squad') renderSquadContent();
+        if (id === 'progress') renderProgressContent();
+    });
 }
 
-function closePlace() {
+function closePlaceScene() {
+    if (!openPlaceId) return;
     if (openPlaceId === 'reset') {
         unmountActiveTool();
         stopSoundscape();
     }
-    openPlaceId = null;
-    drawer.classList.remove('active');
-    sheet.innerHTML = '';
+
+    const kind = transitionForPlace(openPlaceId);
+    playTransition(kind, () => {
+        openPlaceId = null;
+        screenPlace.classList.remove('active');
+        screenMap.classList.add('active');
+        scenePanel.innerHTML = '';
+        sceneBackdrop.innerHTML = '';
+    });
 }
 
-drawer.addEventListener('click', (e) => {
-    if (e.target === drawer || e.target.closest('#drawer-close')) closePlace();
-});
+sceneBack.addEventListener('click', () => closePlaceScene());
 
 subscribe(() => render());
 

@@ -91,10 +91,10 @@ function locationGroup({ id, x, y, scale, fragment, label, labelWidth }) {
 
 export function renderOverworldSVG() {
     const locations = [
-        locationGroup({ id: 'quests', x: 20, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'Quest Board', labelWidth: 92 }),
-        locationGroup({ id: 'reset', x: 185, y: 250, scale: 0.8, fragment: WATERFALL_FRAGMENT, label: 'Decompress', labelWidth: 88 }),
-        locationGroup({ id: 'squad', x: 15, y: 400, scale: 0.75, fragment: COMMUNITY_CENTER_FRAGMENT, label: 'Squad', labelWidth: 60 }),
-        locationGroup({ id: 'progress', x: 175, y: 410, scale: 0.85, fragment: PROGRESS_PLAINS_FRAGMENT, label: 'Progress', labelWidth: 76 }),
+        locationGroup({ id: 'quests', x: 40, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'The Notice Hollow', labelWidth: 150 }),
+        locationGroup({ id: 'reset', x: 175, y: 250, scale: 0.8, fragment: WATERFALL_FRAGMENT, label: 'Stillwater Falls', labelWidth: 136 }),
+        locationGroup({ id: 'squad', x: 35, y: 400, scale: 0.75, fragment: COMMUNITY_CENTER_FRAGMENT, label: 'Gathering Hearth', labelWidth: 128 }),
+        locationGroup({ id: 'progress', x: 165, y: 410, scale: 0.85, fragment: PROGRESS_PLAINS_FRAGMENT, label: 'The Grove', labelWidth: 82 }),
     ].join('');
 
     return `
@@ -110,7 +110,7 @@ export function renderOverworldSVG() {
             ${rockCluster(122, 355, 0.7)}
 
             <path
-                d="M62,315 Q145,278 225,325 Q160,400 71,462 Q160,472 235,437"
+                d="M82,325 Q160,278 215,325 Q170,400 91,460 Q165,472 225,437"
                 fill="none"
                 stroke="#8a6f45"
                 stroke-width="6"
@@ -118,7 +118,7 @@ export function renderOverworldSVG() {
                 opacity="0.4"
             />
             <path
-                d="M62,315 Q145,278 225,325 Q160,400 71,462 Q160,472 235,437"
+                d="M82,325 Q160,278 215,325 Q170,400 91,460 Q165,472 225,437"
                 fill="none"
                 stroke="#d9bc85"
                 stroke-width="2.4"
@@ -130,4 +130,86 @@ export function renderOverworldSVG() {
             ${locations}
         </svg>
     `;
+}
+
+function hollowBackdrop() {
+    return `
+        <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="hollowSky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#4a3d80"/>
+                    <stop offset="1" stop-color="#c98f52"/>
+                </linearGradient>
+            </defs>
+            <rect width="320" height="260" fill="url(#hollowSky)"/>
+            <circle cx="258" cy="52" r="26" fill="#fbe3ad" opacity="0.85"/>
+            <ellipse cx="160" cy="232" rx="230" ry="55" fill="#2f4a2f"/>
+            ${tree(58, 195, 1.3)}
+            ${tree(258, 208, 1.5)}
+            <g transform="translate(80,85) scale(2.3)">${HOBBIT_HOUSE_FRAGMENT}</g>
+        </svg>
+    `;
+}
+
+function fallsBackdrop() {
+    return `
+        <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="fallsSky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#1a2f45"/>
+                    <stop offset="1" stop-color="#5f95a8"/>
+                </linearGradient>
+            </defs>
+            <rect width="320" height="260" fill="url(#fallsSky)"/>
+            <ellipse cx="160" cy="238" rx="230" ry="50" fill="#274a3f"/>
+            <g transform="translate(72,35) scale(2.6)">${WATERFALL_FRAGMENT}</g>
+            <ellipse cx="160" cy="222" rx="95" ry="16" fill="#e8f6fb" opacity="0.3"/>
+        </svg>
+    `;
+}
+
+function hearthBackdrop() {
+    return `
+        <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="hearthGlow" cx="50%" cy="82%" r="70%">
+                    <stop offset="0" stop-color="#e08a3d"/>
+                    <stop offset="55%" stop-color="#3a2554"/>
+                    <stop offset="100%" stop-color="#1f1638"/>
+                </radialGradient>
+            </defs>
+            <rect width="320" height="260" fill="url(#hearthGlow)"/>
+            <ellipse cx="160" cy="238" rx="230" ry="50" fill="#2f3d24"/>
+            ${tree(48, 185, 1.2)}
+            ${tree(272, 198, 1.3)}
+            <g transform="translate(88,60) scale(2.3)">${COMMUNITY_CENTER_FRAGMENT}</g>
+        </svg>
+    `;
+}
+
+function groveBackdrop() {
+    return `
+        <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="groveSky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#3a2d6e"/>
+                    <stop offset="1" stop-color="#8fae5f"/>
+                </linearGradient>
+            </defs>
+            <rect width="320" height="260" fill="url(#groveSky)"/>
+            <path d="M0,190 C60,160 120,180 160,165 C200,150 260,175 320,155 L320,260 L0,260 Z" fill="#6b8f52"/>
+            <path d="M0,215 C60,195 130,205 170,192 C220,178 270,200 320,185 L320,260 L0,260 Z" fill="#82a862"/>
+            ${tree(58, 208, 1)}
+            ${tree(252, 222, 1.1)}
+            <g transform="translate(108,55) scale(2.2)">${PROGRESS_PLAINS_FRAGMENT}</g>
+        </svg>
+    `;
+}
+
+export function renderSceneBackdrop(id) {
+    if (id === 'quests') return hollowBackdrop();
+    if (id === 'reset') return fallsBackdrop();
+    if (id === 'squad') return hearthBackdrop();
+    if (id === 'progress') return groveBackdrop();
+    return '';
 }

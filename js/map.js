@@ -1,10 +1,10 @@
 import { renderOverworldSVG } from './scenery.js';
 
 const PLACE_META = [
-    { id: 'quests', icon: '📜', label: 'Quest Board', glow: '#fab219' },
-    { id: 'reset', icon: '🔮', label: 'Decompress', glow: '#1baf7a' },
-    { id: 'squad', icon: '🔥', label: 'Squad', glow: '#e87ba4' },
-    { id: 'progress', icon: '⛰️', label: 'Progress', glow: '#9085e9' },
+    { id: 'quests', icon: '📜', label: 'The Notice Hollow', glow: '#fab219' },
+    { id: 'reset', icon: '🔮', label: 'Stillwater Falls', glow: '#1baf7a' },
+    { id: 'squad', icon: '🔥', label: 'Gathering Hearth', glow: '#e87ba4' },
+    { id: 'progress', icon: '⛰️', label: 'The Grove', glow: '#9085e9' },
 ];
 
 export function placeById(id) {
