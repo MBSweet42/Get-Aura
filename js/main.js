@@ -9,7 +9,7 @@ import { openCreatureDialogue } from './creatureDialogue.js';
 import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
-import { renderPlaceNodes, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
+import { renderGround, renderPlaceNodes, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
 import { showToast } from './toast.js';
 
 const backdrop = document.getElementById('modal-backdrop');
@@ -50,6 +50,7 @@ function renderWorld() {
     screen.innerHTML = `
         <div class="world">
             <div class="world-sky">${renderStars()}${renderSparkles()}</div>
+            ${renderGround()}
             <div class="world-brand">✨ Get Aura<span class="world-brand-sub">anxiety slay game</span></div>
             <div class="world-hud" id="hud-mount">${renderHud(state)}</div>
             ${renderCompanion(state)}
