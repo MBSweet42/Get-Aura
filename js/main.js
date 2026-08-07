@@ -8,6 +8,7 @@ import { openCheckIn } from './checkin.js';
 import { openReflection } from './reflection.js';
 import { openCreatureDialogue } from './creatureDialogue.js';
 import { openItemDiscovery } from './itemDiscovery.js';
+import { openDisclaimer } from './disclaimer.js';
 import { renderCoop, wireCoop } from './coop.js';
 import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
@@ -324,3 +325,7 @@ drawer.addEventListener('click', (e) => {
 subscribe(() => render());
 
 renderWorld();
+
+if (!getState().disclaimerSeen) {
+    openDisclaimer(backdrop, () => {});
+}

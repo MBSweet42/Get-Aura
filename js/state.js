@@ -27,6 +27,7 @@ function defaultState() {
         history: [], // { date, threatLevel, calmHP, activity, effect }
         collection: [],
         careFocus: null,
+        disclaimerSeen: false,
         squad: [
             { id: 'sam', name: 'Sam', emoji: '🦊', status: 'Green — Rest & Digest' },
             { id: 'priya', name: 'Priya', emoji: '🦋', status: 'Yellow — A little wound up' },
@@ -127,6 +128,11 @@ export function completeQuest({ threatRelief, calmGain, xpGain, activity }) {
 
 export function setCareFocus(focusId) {
     state = { ...state, careFocus: focusId };
+    notify();
+}
+
+export function acknowledgeDisclaimer() {
+    state = { ...state, disclaimerSeen: true };
     notify();
 }
 

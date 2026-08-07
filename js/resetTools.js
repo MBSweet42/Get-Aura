@@ -7,8 +7,8 @@ export const RESET_TOOLS = [
         id: 'pattern-break',
         name: 'Pattern Break',
         emoji: '🧩',
-        when: "a memory or thought loop won't let go",
-        blurb: 'Visuospatial play competes for the same mental resources intrusive images use to lodge themselves in memory.',
+        when: "something upsetting just happened and you need to ground",
+        blurb: 'A grounding, present-moment focus game — good for right after something upsetting, not a fix for old or ongoing stuff.',
         reward: { threatRelief: 10, calmGain: 8, xpGain: 10 },
     },
     {
