@@ -87,7 +87,7 @@ Full version:
 
 The mini games included in Get Aura are inspired by research on grounding and calming techniques for anxiety in the moment. They are not a clinical treatment for trauma, PTSD, or any diagnosed condition.
 
-If you are in crisis, experiencing thoughts of harming yourself, or dealing with a mental health emergency, please contact a licensed professional or crisis service in your area rather than relying on this app.
+If you are in crisis, experiencing thoughts of harming yourself, or dealing with a mental health emergency, please contact a licensed professional or crisis service in your area.
 
 By using Get Aura, you understand that the app is a self care companion, not a substitute for therapy, counseling, or medical advice."
 
