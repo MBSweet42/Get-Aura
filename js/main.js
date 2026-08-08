@@ -15,7 +15,7 @@ import { playSoundscape, stopSoundscape, isPlaying } from './soundscapes.js';
 import { RESET_TOOLS, toolById, mountTool, unmountActiveTool, controlPatternBreak } from './resetTools.js';
 import { renderGround, renderStars, renderSparkles, wireMapNodes, placeById } from './map.js';
 import { renderSceneBackdrop } from './scenery.js';
-import { playTransition, transitionForPlace } from './transitions.js';
+import { playTransition, transitionForPlace, pointFromEvent } from './transitions.js';
 import { showToast } from './toast.js';
 
 const backdrop = document.getElementById('modal-backdrop');
@@ -76,7 +76,7 @@ function renderWorld() {
         });
     });
 
-    wireMapNodes(screen, (id) => openPlaceScene(id));
+    wireMapNodes(screen, (id, event, el) => openPlaceScene(id, pointFromEvent(el, event)));
 }
 
 function refreshWorldDynamic() {
@@ -303,10 +303,10 @@ function render() {
     if (openPlaceId === 'progress') renderProgressContent();
 }
 
-function openPlaceScene(id) {
+function openPlaceScene(id, point) {
     if (openPlaceId) return;
 
-    playTransition(transitionForPlace(id), () => {
+    playTransition(transitionForPlace(id), point, () => {
         openPlaceId = id;
         sceneBackdrop.innerHTML = renderSceneBackdrop(id);
         screenMap.classList.remove('active');
@@ -316,10 +316,14 @@ function openPlaceScene(id) {
         if (id === 'reset') renderResetContent();
         if (id === 'squad') renderSquadContent();
         if (id === 'progress') renderProgressContent();
+
+        scenePanel.classList.remove('rise');
+        void scenePanel.offsetWidth;
+        scenePanel.classList.add('rise');
     });
 }
 
-function closePlaceScene() {
+function closePlaceScene(point) {
     if (!openPlaceId) return;
     if (openPlaceId === 'reset') {
         unmountActiveTool();
@@ -327,7 +331,7 @@ function closePlaceScene() {
     }
 
     const kind = transitionForPlace(openPlaceId);
-    playTransition(kind, () => {
+    playTransition(kind, point, () => {
         openPlaceId = null;
         screenPlace.classList.remove('active');
         screenMap.classList.add('active');
@@ -336,7 +340,7 @@ function closePlaceScene() {
     });
 }
 
-sceneBack.addEventListener('click', () => closePlaceScene());
+sceneBack.addEventListener('click', (e) => closePlaceScene(pointFromEvent(sceneBack, e)));
 
 subscribe(() => render());
 

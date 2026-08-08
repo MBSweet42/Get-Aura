@@ -17,11 +17,11 @@ export function renderGround() {
 
 export function wireMapNodes(container, onNavigate) {
     container.querySelectorAll('[data-nav]').forEach((el) => {
-        el.addEventListener('click', () => onNavigate(el.dataset.nav));
+        el.addEventListener('click', (e) => onNavigate(el.dataset.nav, e));
         el.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                onNavigate(el.dataset.nav);
+                onNavigate(el.dataset.nav, null, el);
             }
         });
     });
