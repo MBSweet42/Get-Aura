@@ -220,11 +220,13 @@ body {
 /* ---------- World (the whole app) ---------- */
 
 .world {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 620px;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 100vh;
     overflow: hidden;
+    z-index: 1;
     background:
         radial-gradient(ellipse 55% 30% at 78% 12%, rgba(255, 214, 165, 0.35) 0%, rgba(255, 214, 165, 0) 60%),
         radial-gradient(ellipse 130% 75% at 50% -8%, #715a9e 0%, #543f83 22%, #3a2d6e 42%, #241c56 62%, #150f38 85%, #0c0924 100%);

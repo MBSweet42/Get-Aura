@@ -74,15 +74,38 @@ function rockCluster(x, y, scale = 1) {
     `;
 }
 
+function mountainRange() {
+    return `
+        <path d="M0,210 L25,120 L50,165 L85,90 L120,160 L155,110 L190,170 L225,100 L265,165 L300,130 L320,155 L320,230 L0,230 Z" fill="#352a5c" opacity="0.9"/>
+        <path d="M25,120 L35,140 L15,140 Z" fill="#e8e4f5" opacity="0.5"/>
+        <path d="M85,90 L97,115 L73,115 Z" fill="#e8e4f5" opacity="0.55"/>
+        <path d="M155,110 L166,133 L144,133 Z" fill="#e8e4f5" opacity="0.45"/>
+        <path d="M225,100 L237,124 L213,124 Z" fill="#e8e4f5" opacity="0.5"/>
+    `;
+}
+
+function lake() {
+    return `
+        <ellipse cx="195" cy="326" rx="72" ry="30" fill="#24404f"/>
+        <ellipse cx="195" cy="321" rx="60" ry="23" fill="#3f7d95"/>
+        <ellipse cx="195" cy="317" rx="44" ry="15" fill="#6fb6cf" opacity="0.6"/>
+        <ellipse cx="172" cy="312" rx="14" ry="4" fill="#e8f6fb" opacity="0.5"/>
+        <ellipse cx="220" cy="325" rx="10" ry="3" fill="#e8f6fb" opacity="0.4"/>
+    `;
+}
+
 function locationGroup({ id, x, y, scale, fragment, label, labelWidth }) {
     const size = 100 * scale;
+    const labelCx = x + size / 2;
+    const labelY = y + size + 16;
     return `
         <g class="map-hotspot" data-nav="${id}" tabindex="0" role="button" aria-label="${label}">
             <rect x="${x - 14}" y="${y - 14}" width="${size + 28}" height="${size + 28}" fill="transparent"/>
-            <ellipse cx="${x + size / 2}" cy="${y + size - 4}" rx="${size * 0.38}" ry="${size * 0.09}" fill="#0c0a1c" opacity="0.3"/>
+            <ellipse cx="${labelCx}" cy="${y + size - 4}" rx="${size * 0.38}" ry="${size * 0.09}" fill="#0c0a1c" opacity="0.3"/>
             <g transform="translate(${x},${y}) scale(${scale})">${fragment}</g>
-            <g transform="translate(${x + size / 2},${y + size + 16})">
-                <rect x="${-labelWidth / 2}" y="-11" width="${labelWidth}" height="22" rx="8" fill="rgba(20,14,45,0.6)"/>
+            <line x1="${labelCx}" y1="${labelY - 11}" x2="${labelCx}" y2="${labelY - 22}" stroke="#8a6f45" stroke-width="3" stroke-linecap="round"/>
+            <g transform="translate(${labelCx},${labelY})">
+                <rect x="${-labelWidth / 2}" y="-11" width="${labelWidth}" height="22" rx="8" fill="rgba(20,14,45,0.65)" stroke="rgba(217,188,133,0.45)" stroke-width="1"/>
                 <text x="0" y="5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff" font-family="system-ui, sans-serif">${label}</text>
             </g>
         </g>
@@ -91,23 +114,33 @@ function locationGroup({ id, x, y, scale, fragment, label, labelWidth }) {
 
 export function renderOverworldSVG() {
     const locations = [
-        locationGroup({ id: 'quests', x: 40, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'The Notice Hollow', labelWidth: 150 }),
-        locationGroup({ id: 'reset', x: 175, y: 250, scale: 0.8, fragment: WATERFALL_FRAGMENT, label: 'Stillwater Falls', labelWidth: 136 }),
-        locationGroup({ id: 'squad', x: 35, y: 400, scale: 0.75, fragment: COMMUNITY_CENTER_FRAGMENT, label: 'Gathering Hearth', labelWidth: 128 }),
-        locationGroup({ id: 'progress', x: 165, y: 410, scale: 0.85, fragment: PROGRESS_PLAINS_FRAGMENT, label: 'The Grove', labelWidth: 82 }),
+        locationGroup({ id: 'quests', x: 40, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'Quest Drop', labelWidth: 90 }),
+        locationGroup({ id: 'reset', x: 175, y: 250, scale: 0.8, fragment: WATERFALL_FRAGMENT, label: 'Brain Bleach', labelWidth: 100 }),
+        locationGroup({ id: 'squad', x: 35, y: 400, scale: 0.75, fragment: COMMUNITY_CENTER_FRAGMENT, label: 'The Vibe Check', labelWidth: 116 }),
+        locationGroup({ id: 'progress', x: 165, y: 410, scale: 0.85, fragment: PROGRESS_PLAINS_FRAGMENT, label: 'Stats & Flex', labelWidth: 100 }),
     ].join('');
 
     return `
-        <svg class="world-ground-svg" viewBox="0 0 320 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <svg class="world-ground-svg" viewBox="0 0 320 560" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            ${mountainRange()}
+
             <path d="M0,260 C60,235 120,250 160,238 C200,226 260,246 320,224 L320,560 L0,560 Z" fill="#241f4a"/>
             <path d="M0,300 C60,278 130,292 170,276 C220,258 270,282 320,262 L320,560 L0,560 Z" fill="#22342f"/>
             <path d="M0,345 C70,320 140,336 180,316 C230,296 280,320 320,304 L320,560 L0,560 Z" fill="#243d2c"/>
 
+            ${lake()}
+
             ${tree(148, 300, 0.9)}
-            ${tree(288, 355, 1.05)}
-            ${rockCluster(275, 275, 0.75)}
+            ${tree(288, 240, 1.1)}
+            ${tree(305, 355, 1.05)}
+            ${rockCluster(258, 285, 0.75)}
             ${tree(140, 515, 1)}
+            ${tree(60, 535, 0.75)}
+            ${tree(250, 545, 0.85)}
             ${rockCluster(122, 355, 0.7)}
+            ${tree(10, 270, 0.8)}
+            ${tree(6, 445, 0.9)}
+            ${tree(312, 450, 0.95)}
 
             <path
                 d="M82,325 Q160,278 215,325 Q170,400 91,460 Q165,472 225,437"
