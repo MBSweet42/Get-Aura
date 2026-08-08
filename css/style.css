@@ -178,25 +178,43 @@ body {
     100% { transform: scale(0.1) rotateY(0deg); opacity: 0; }
 }
 
-.leaf-piece {
+.cupboard-panel {
     position: fixed;
-    left: var(--ox);
     top: var(--oy);
-    width: 40px;
-    height: 24px;
-    margin: -12px 0 0 -20px;
-    background: #5c8a5f;
-    border-radius: 0 100% 0 100%;
-    opacity: 0;
-    animation: leaf-sweep var(--duration, 750ms) ease-in-out both;
-    animation-delay: calc(var(--i) * 40ms);
+    left: var(--ox);
+    width: 70px;
+    height: 160px;
+    margin-top: -80px;
+    background: linear-gradient(160deg, #9a7a52, #5c3f28);
+    border: 3px solid #4a3220;
 }
 
-@keyframes leaf-sweep {
-    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-    20% { opacity: 0.95; }
-    50% { transform: translate(90px, -50px) rotate(200deg); opacity: 0.9; }
-    100% { transform: translate(10px, 20px) rotate(380deg); opacity: 0; }
+.cupboard-left {
+    margin-left: -70px;
+    border-radius: 6px 0 0 6px;
+    transform-origin: right center;
+    animation: cupboard-swing-left var(--duration, 750ms) cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.cupboard-right {
+    margin-left: 0;
+    border-radius: 0 6px 6px 0;
+    transform-origin: left center;
+    animation: cupboard-swing-right var(--duration, 750ms) cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes cupboard-swing-left {
+    0% { transform: scale(0.15) rotateY(0deg); opacity: 0; }
+    45% { transform: scale(1.1) rotateY(-38deg); opacity: 1; }
+    55% { transform: scale(1.1) rotateY(-26deg); opacity: 1; }
+    100% { transform: scale(0.15) rotateY(0deg); opacity: 0; }
+}
+
+@keyframes cupboard-swing-right {
+    0% { transform: scale(0.15) rotateY(0deg); opacity: 0; }
+    45% { transform: scale(1.1) rotateY(38deg); opacity: 1; }
+    55% { transform: scale(1.1) rotateY(26deg); opacity: 1; }
+    100% { transform: scale(0.15) rotateY(0deg); opacity: 0; }
 }
 
 /* ---------- Cards ---------- */
@@ -773,13 +791,17 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+    background: linear-gradient(180deg, #6b4a30, #4a3220);
+    border: 1px solid #3a2818;
+    border-radius: 14px;
+    padding: 14px;
 }
 
 .item-slot {
     aspect-ratio: 1;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: var(--surface-card-raised);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.22);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -791,12 +813,12 @@ body {
 
 .item-slot .item-emoji {
     font-size: 24px;
-    opacity: 0.3;
+    opacity: 0.35;
 }
 
 .item-slot.owned {
-    background: color-mix(in srgb, var(--accent-violet) 16%, var(--surface-card-raised));
-    border-color: color-mix(in srgb, var(--accent-violet) 45%, transparent);
+    background: color-mix(in srgb, var(--accent-violet) 22%, rgba(0, 0, 0, 0.15));
+    border-color: color-mix(in srgb, #f2b155 55%, transparent);
 }
 
 .item-slot.owned .item-emoji {
@@ -870,6 +892,55 @@ body {
         transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1) rotate(180deg);
         opacity: 0;
     }
+}
+
+/* ---------- Town ---------- */
+
+.house-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.house-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 16px 10px 12px;
+    background: linear-gradient(180deg, var(--surface-card-raised), var(--surface-card));
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+    transition: transform 150ms ease;
+}
+
+.house-card:active {
+    transform: scale(0.96);
+}
+
+.house-icon {
+    font-size: 30px;
+    line-height: 1;
+}
+
+.house-avatar {
+    font-size: 18px;
+    margin-top: -10px;
+}
+
+.house-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+
+.house-status {
+    font-size: 11px;
+    color: var(--text-muted);
 }
 
 /* ---------- Squad ---------- */

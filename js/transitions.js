@@ -1,17 +1,17 @@
-const DURATIONS = { mist: 700, door: 750, firelight: 650, leaves: 750 };
+const DURATIONS = { mist: 700, door: 750, firelight: 650, cupboard: 750 };
 
 const TINTS = {
     mist: 'radial-gradient(circle, #e8f6fb, #a9d4e0)',
     door: 'radial-gradient(circle, #8a6642, #4a3220)',
     firelight: 'radial-gradient(circle, #ffb347, #a34a12)',
-    leaves: 'radial-gradient(circle, #8fc47e, #3f6b45)',
+    cupboard: 'radial-gradient(circle, #9a7a52, #4a3220)',
 };
 
 const TRANSITION_KIND = {
     quests: 'door',
     reset: 'mist',
     squad: 'firelight',
-    progress: 'leaves',
+    progress: 'cupboard',
 };
 
 export function transitionForPlace(id) {
@@ -43,13 +43,13 @@ export function playTransition(kind, point, onMidpoint) {
             overlay.appendChild(door);
         }
 
-        if (kind === 'leaves') {
-            for (let i = 0; i < 6; i++) {
-                const leaf = document.createElement('span');
-                leaf.className = 'leaf-piece';
-                leaf.style.setProperty('--i', i);
-                overlay.appendChild(leaf);
-            }
+        if (kind === 'cupboard') {
+            const left = document.createElement('div');
+            left.className = 'cupboard-panel cupboard-left';
+            const right = document.createElement('div');
+            right.className = 'cupboard-panel cupboard-right';
+            overlay.appendChild(left);
+            overlay.appendChild(right);
         }
 
         document.body.appendChild(overlay);

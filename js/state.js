@@ -145,7 +145,7 @@ export function recordEffect(effect) {
 }
 
 export function addSquadMember({ name, emoji }) {
-    const member = { id: `m${Date.now()}`, name, emoji, status: 'Just added 👋' };
+    const member = { id: `m${Date.now()}`, name, emoji, status: 'Just moved in 👋' };
     state = { ...state, squad: [...state.squad, member] };
     notify();
 }

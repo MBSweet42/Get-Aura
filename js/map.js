@@ -1,7 +1,7 @@
 import { renderOverworldSVG } from './scenery.js';
 
 const PLACE_META = [
-    { id: 'quests', icon: '📜', label: 'Quest Drop', glow: '#fab219' },
+    { id: 'quests', icon: '📜', label: 'Main Quest', glow: '#fab219' },
     { id: 'reset', icon: '🔮', label: 'Brain Bleach', glow: '#1baf7a' },
     { id: 'squad', icon: '🔥', label: 'The Vibe Check', glow: '#e87ba4' },
     { id: 'progress', icon: '⛰️', label: 'Stats & Flex', glow: '#9085e9' },

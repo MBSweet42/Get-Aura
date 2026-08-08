@@ -114,7 +114,7 @@ function locationGroup({ id, x, y, scale, fragment, label, labelWidth }) {
 
 export function renderOverworldSVG() {
     const locations = [
-        locationGroup({ id: 'quests', x: 40, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'Quest Drop', labelWidth: 90 }),
+        locationGroup({ id: 'quests', x: 40, y: 250, scale: 0.85, fragment: HOBBIT_HOUSE_FRAGMENT, label: 'Main Quest', labelWidth: 96 }),
         locationGroup({ id: 'reset', x: 175, y: 250, scale: 0.8, fragment: WATERFALL_FRAGMENT, label: 'Brain Bleach', labelWidth: 100 }),
         locationGroup({ id: 'squad', x: 35, y: 400, scale: 0.75, fragment: COMMUNITY_CENTER_FRAGMENT, label: 'The Vibe Check', labelWidth: 116 }),
         locationGroup({ id: 'progress', x: 165, y: 410, scale: 0.85, fragment: PROGRESS_PLAINS_FRAGMENT, label: 'Stats & Flex', labelWidth: 100 }),
@@ -220,21 +220,69 @@ function hearthBackdrop() {
     `;
 }
 
-function groveBackdrop() {
+function cupboardBackdrop() {
     return `
         <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
             <defs>
-                <linearGradient id="groveSky" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="cupboardWall" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stop-color="#3a2d6e"/>
-                    <stop offset="1" stop-color="#8fae5f"/>
+                    <stop offset="1" stop-color="#5c452e"/>
                 </linearGradient>
             </defs>
-            <rect width="320" height="260" fill="url(#groveSky)"/>
-            <path d="M0,190 C60,160 120,180 160,165 C200,150 260,175 320,155 L320,260 L0,260 Z" fill="#6b8f52"/>
-            <path d="M0,215 C60,195 130,205 170,192 C220,178 270,200 320,185 L320,260 L0,260 Z" fill="#82a862"/>
-            ${tree(58, 208, 1)}
-            ${tree(252, 222, 1.1)}
-            <g transform="translate(108,55) scale(2.2)">${PROGRESS_PLAINS_FRAGMENT}</g>
+            <rect width="320" height="260" fill="url(#cupboardWall)"/>
+            <ellipse cx="160" cy="248" rx="230" ry="35" fill="#2a2018"/>
+            <rect x="75" y="45" width="170" height="205" rx="8" fill="#8a6642"/>
+            <rect x="75" y="45" width="170" height="205" rx="8" fill="none" stroke="#4a3220" stroke-width="3"/>
+            <rect x="84" y="56" width="72" height="182" rx="4" fill="#7a5638" stroke="#4a3220" stroke-width="2"/>
+            <rect x="164" y="56" width="72" height="182" rx="4" fill="#7a5638" stroke="#4a3220" stroke-width="2"/>
+            <line x1="84" y1="147" x2="156" y2="147" stroke="#4a3220" stroke-width="1.5" opacity="0.5"/>
+            <line x1="164" y1="147" x2="236" y2="147" stroke="#4a3220" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="150" cy="147" r="4" fill="#e8c98a"/>
+            <circle cx="170" cy="147" r="4" fill="#e8c98a"/>
+            <rect x="84" y="236" width="152" height="10" fill="#4a3220"/>
+            <circle cx="102" cy="38" r="9" fill="#9085e9" opacity="0.85"/>
+            <path d="M212,42 L218,26 L224,42 Z" fill="#fab219"/>
+            <circle cx="238" cy="34" r="6" fill="#e87ba4" opacity="0.8"/>
+        </svg>
+    `;
+}
+
+function houseSilhouette(roofColor, wallColor, doorColor) {
+    return `
+        <rect x="16" y="54" width="40" height="32" rx="2" fill="${wallColor}"/>
+        <path d="M12,54 L36,30 L60,54 Z" fill="${roofColor}"/>
+        <rect x="29" y="68" width="13" height="18" rx="1.5" fill="${doorColor}"/>
+        <rect x="19" y="60" width="11" height="9" rx="1.5" fill="#fbdf8f"/>
+        <rect x="19" y="60" width="11" height="9" rx="1.5" fill="none" stroke="#4a3220" stroke-width="1.6"/>
+    `;
+}
+
+function campfireGlow() {
+    return `
+        <line x1="66" y1="90" x2="83" y2="90" stroke="#6b4a30" stroke-width="3" stroke-linecap="round"/>
+        <line x1="68" y1="92" x2="81" y2="83" stroke="#6b4a30" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="75" cy="82" rx="15" ry="8" fill="#ff9d4d" opacity="0.25"/>
+        <path d="M75,68 C79,75 81,80 75,88 C69,80 71,75 75,68 Z" fill="#ffb347"/>
+        <path d="M75,75 C77,79 78,81 75,85 C72,81 73,79 75,75 Z" fill="#fff0c4"/>
+    `;
+}
+
+function townBackdrop() {
+    return `
+        <svg viewBox="0 0 320 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <radialGradient id="townGlow" cx="50%" cy="80%" r="75%">
+                    <stop offset="0" stop-color="#e08a3d"/>
+                    <stop offset="55%" stop-color="#3a2554"/>
+                    <stop offset="100%" stop-color="#1f1638"/>
+                </radialGradient>
+            </defs>
+            <rect width="320" height="260" fill="url(#townGlow)"/>
+            <ellipse cx="160" cy="242" rx="230" ry="45" fill="#2f3d24"/>
+            <g transform="translate(20,122) scale(1.4)">${houseSilhouette('#5c3f28', '#7a5638', '#4a3220')}</g>
+            <g transform="translate(122,142) scale(1.5)">${campfireGlow()}</g>
+            <g transform="translate(214,110) scale(1.35)">${houseSilhouette('#4a5c3f', '#6b8257', '#3a2f20')}</g>
+            <g transform="translate(255,152) scale(1.05)">${houseSilhouette('#5c3a4a', '#7a5468', '#3a2230')}</g>
         </svg>
     `;
 }
@@ -242,7 +290,7 @@ function groveBackdrop() {
 export function renderSceneBackdrop(id) {
     if (id === 'quests') return hollowBackdrop();
     if (id === 'reset') return fallsBackdrop();
-    if (id === 'squad') return hearthBackdrop();
-    if (id === 'progress') return groveBackdrop();
+    if (id === 'squad') return townBackdrop();
+    if (id === 'progress') return cupboardBackdrop();
     return '';
 }

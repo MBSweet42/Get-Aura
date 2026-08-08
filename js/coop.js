@@ -1,5 +1,5 @@
 import { showToast } from './toast.js';
-import { addSquadMember, removeSquadMember } from './state.js';
+import { addSquadMember, removeSquadMember, getState } from './state.js';
 
 const AFFIRMATIONS = [
     "You've got this 💪",
@@ -7,6 +7,14 @@ const AFFIRMATIONS = [
     "One step at a time — you're doing great 🌱",
     'Sending you calm ✨',
     "I'm in this with you 🤝",
+];
+
+const TREATS = [
+    { emoji: '🍵', name: 'Warm Tea' },
+    { emoji: '🍪', name: 'Cookies' },
+    { emoji: '🍫', name: 'Hot Cocoa' },
+    { emoji: '🍲', name: 'Cozy Soup' },
+    { emoji: '🧁', name: 'Cupcake' },
 ];
 
 const EMOJI_CHOICES = ['🦊', '🦋', '🐢', '🌱', '🐧', '🦉', '🐝', '🦄', '🐨', '🐙'];
@@ -23,7 +31,7 @@ function mockCheerFeed(state) {
     }
     if (items.length === 0) {
         items.push({
-            from: members[0]?.name || 'Your squad',
+            from: members[0]?.name || 'The town',
             emoji: members[0]?.emoji || '💛',
             text: 'is cheering you on today 💛',
         });
@@ -32,18 +40,15 @@ function mockCheerFeed(state) {
 }
 
 export function renderCoop(state) {
-    const members = state.squad
+    const houses = state.squad
         .map(
             (m) => `
-        <div class="squad-member">
-            <div class="squad-avatar">${m.emoji}</div>
-            <div class="squad-member-info">
-                <div class="squad-name">${m.name}</div>
-                <div class="squad-status">${m.status}</div>
-            </div>
-            <button class="btn btn-sm" data-cheer="${m.id}" data-name="${m.name}">👏 Cheer</button>
-            <button class="btn btn-sm btn-ghost" data-remove="${m.id}" aria-label="Remove ${m.name}">✕</button>
-        </div>
+        <button class="house-card" data-visit="${m.id}">
+            <span class="house-icon">🏠</span>
+            <span class="house-avatar">${m.emoji}</span>
+            <span class="house-name">${m.name}</span>
+            <span class="house-status">${m.status}</span>
+        </button>
     `
         )
         .join('');
@@ -65,21 +70,22 @@ export function renderCoop(state) {
     return `
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <h2 style="margin:0;">Squad</h2>
-                <button class="btn btn-sm" id="add-member-btn">+ Add</button>
+                <h2 style="margin:0;">The Town</h2>
+                <button class="btn btn-sm" id="add-member-btn">+ Invite</button>
             </div>
-            <div>${members || '<p class="quest-desc">No one here yet — add your first squad member.</p>'}</div>
+            <p class="quest-desc" style="margin-bottom:12px;">Tap a house to visit — send a letter or leave a treat on the doorstep.</p>
+            <div class="house-grid">${houses || '<p class="quest-desc">No one\'s moved in yet — invite your first friend.</p>'}</div>
         </div>
         <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <h2 style="margin:0;">Co-Regulation Ping</h2>
+                <h2 style="margin:0;">Ring the Bell</h2>
                 <span class="badge-soon">Multiplayer coming soon</span>
             </div>
-            <p class="quest-desc">Nervous systems co-regulate. When your squad is live, sending a ping asks them to breathe with you — right now this is a preview of how it'll feel.</p>
-            <button class="btn btn-primary btn-block" id="coop-ping-btn">Send Co-Regulation Ping</button>
+            <p class="quest-desc">Nervous systems co-regulate. When the town is live, ringing the bell asks everyone to breathe with you — right now this is a preview of how it'll feel.</p>
+            <button class="btn btn-primary btn-block" id="coop-ping-btn">Ring the Town Bell</button>
         </div>
         <div class="card">
-            <h2>Cheering you on</h2>
+            <h2>Notice Board</h2>
             <div>${feed}</div>
         </div>
     `;
@@ -89,18 +95,14 @@ export function wireCoop(container, backdrop, onChange) {
     const pingBtn = container.querySelector('#coop-ping-btn');
     if (pingBtn) {
         pingBtn.addEventListener('click', () => {
-            showToast('Ping sent — your squad will feel this once multiplayer is live 💛');
+            showToast('The bell rings out — the town will feel this once multiplayer is live 💛');
         });
     }
 
-    container.querySelectorAll('[data-cheer]').forEach((btn) => {
-        btn.addEventListener('click', () => openAffirmationPicker(btn.dataset.name, backdrop));
-    });
-
-    container.querySelectorAll('[data-remove]').forEach((btn) => {
+    container.querySelectorAll('[data-visit]').forEach((btn) => {
         btn.addEventListener('click', () => {
-            removeSquadMember(btn.dataset.remove);
-            onChange && onChange();
+            const member = getState().squad.find((m) => m.id === btn.dataset.visit);
+            if (member) openVisit(member, backdrop, onChange);
         });
     });
 
@@ -110,11 +112,44 @@ export function wireCoop(container, backdrop, onChange) {
     }
 }
 
+function openVisit(member, backdrop, onChange) {
+    backdrop.innerHTML = `
+        <div class="modal-sheet">
+            <div class="creature-intro">
+                <span class="creature-face">${member.emoji}</span>
+                <div>
+                    <p class="creature-name">${member.name}'s place</p>
+                    <p class="quest-desc">${member.status}</p>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" id="visit-letter">📜 Send a Letter</button>
+            <button class="btn btn-block" id="visit-treat">🍪 Leave a Treat</button>
+            <button class="btn btn-ghost btn-block" id="visit-remove">Move out of town</button>
+            <button class="btn btn-ghost btn-block" id="visit-close">Close</button>
+        </div>
+    `;
+    backdrop.classList.add('active');
+
+    function close() {
+        backdrop.classList.remove('active');
+        backdrop.innerHTML = '';
+    }
+
+    backdrop.querySelector('#visit-letter').addEventListener('click', () => openAffirmationPicker(member.name, backdrop));
+    backdrop.querySelector('#visit-treat').addEventListener('click', () => openGiftPicker(member.name, backdrop));
+    backdrop.querySelector('#visit-remove').addEventListener('click', () => {
+        removeSquadMember(member.id);
+        close();
+        onChange && onChange();
+    });
+    backdrop.querySelector('#visit-close').addEventListener('click', close);
+}
+
 function openAffirmationPicker(name, backdrop) {
     backdrop.innerHTML = `
         <div class="modal-sheet">
             <div>
-                <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">Cheer for ${name}</h2>
+                <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">A letter for ${name}</h2>
                 <p class="quest-desc">Multiplayer coming soon — this previews how it'll feel.</p>
             </div>
             <div class="affirmation-list">
@@ -135,7 +170,7 @@ function openAffirmationPicker(name, backdrop) {
     function send(msg) {
         const trimmed = msg.trim();
         if (!trimmed) return;
-        showToast(`Sent ${name}: "${trimmed}" (multiplayer coming soon)`);
+        showToast(`Sent ${name} a letter: "${trimmed}" (multiplayer coming soon)`);
         close();
     }
 
@@ -148,17 +183,47 @@ function openAffirmationPicker(name, backdrop) {
     backdrop.querySelector('#aff-cancel').addEventListener('click', close);
 }
 
+function openGiftPicker(name, backdrop) {
+    backdrop.innerHTML = `
+        <div class="modal-sheet">
+            <div>
+                <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">Leave ${name} a treat</h2>
+                <p class="quest-desc">Multiplayer coming soon — this previews how it'll feel.</p>
+            </div>
+            <div class="affirmation-list">
+                ${TREATS.map((t) => `<button class="btn btn-block" data-treat="${t.emoji}|${t.name}">${t.emoji} ${t.name}</button>`).join('')}
+            </div>
+            <button class="btn btn-ghost btn-block" id="gift-cancel">Cancel</button>
+        </div>
+    `;
+    backdrop.classList.add('active');
+
+    function close() {
+        backdrop.classList.remove('active');
+        backdrop.innerHTML = '';
+    }
+
+    backdrop.querySelectorAll('[data-treat]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const [emoji, treatName] = btn.dataset.treat.split('|');
+            showToast(`Left ${name} a ${treatName} ${emoji} (multiplayer coming soon)`);
+            close();
+        });
+    });
+    backdrop.querySelector('#gift-cancel').addEventListener('click', close);
+}
+
 function openAddMember(backdrop, onChange) {
     let selectedEmoji = EMOJI_CHOICES[0];
 
     backdrop.innerHTML = `
         <div class="modal-sheet">
-            <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">Add to your squad</h2>
+            <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">Invite someone to town</h2>
             <input type="text" class="quest-input" id="member-name" placeholder="Their name" />
             <div class="emoji-picker">
                 ${EMOJI_CHOICES.map((e, i) => `<button class="emoji-choice ${i === 0 ? 'active' : ''}" data-emoji="${e}">${e}</button>`).join('')}
             </div>
-            <button class="btn btn-primary btn-block" id="member-save">Add</button>
+            <button class="btn btn-primary btn-block" id="member-save">Invite</button>
             <button class="btn btn-ghost btn-block" id="member-cancel">Cancel</button>
         </div>
     `;
