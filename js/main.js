@@ -3,7 +3,7 @@ import { renderMeters, renderHud, updateHud } from './meters.js';
 import { renderCompanion, updateCompanion } from './companion.js';
 import { renderStreak, renderHistory } from './streak.js';
 import { QUESTS, SUNRISE_STRETCH, suggestedQuest, questById, tierGlow } from './quests.js';
-import { renderMentorCard, openMentorCheckIn } from './mentor.js';
+import { renderMentorCard, openMentorCheckIn, sunriseDoneToday } from './mentor.js';
 import { ITEMS, totalItemCount, CARE_FOCUS_OPTIONS, careFocusById } from './items.js';
 import { openCheckIn } from './checkin.js';
 import { openReflection } from './reflection.js';
@@ -62,7 +62,7 @@ function renderWorld() {
         <div class="world">
             <div class="world-sky">${renderStars()}${renderSparkles()}</div>
             ${renderGround()}
-            <div class="world-brand">✨ Get Aura<span class="world-brand-sub">anxiety slay game</span></div>
+            <div class="world-brand">✨ Get Aura<span class="world-brand-sub">a little check-in, every day</span></div>
             <div class="world-hud" id="hud-mount">${renderHud(state)}</div>
             ${renderCompanion(state)}
         </div>
@@ -72,8 +72,11 @@ function renderWorld() {
         openCheckIn(backdrop, (submitted) => {
             render();
             if (submitted) {
-                const quest = suggestedQuest(getState().threatLevel);
-                setTimeout(() => openCreatureDialogue(quest, backdrop, () => render()), 250);
+                const freshState = getState();
+                const next = !sunriseDoneToday(freshState)
+                    ? SUNRISE_STRETCH
+                    : suggestedQuest(freshState.threatLevel);
+                setTimeout(() => openCreatureDialogue(next, backdrop, () => render()), 250);
             }
         });
     });
@@ -195,7 +198,7 @@ function renderResetContent() {
         if (newItem) {
             showToast(`✨ Found something for your Cozy Den — check it when you head out`);
         } else {
-            showToast(`Nice reset — Threat −${reward.threatRelief}, Calm +${reward.calmGain}, XP +${reward.xpGain}`);
+            showToast(`Nice reset — Wound Up −${reward.threatRelief}, Calm +${reward.calmGain}, XP +${reward.xpGain}`);
         }
         pendingToolCompletion = { newItem, reward };
     });

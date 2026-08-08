@@ -37,7 +37,7 @@ export function renderMeters(container, state) {
     container.innerHTML = `
         <div class="meter">
             <div class="meter-row">
-                <span class="meter-label">Calm HP</span>
+                <span class="meter-label">Calm</span>
                 <span class="meter-value" id="calm-value">${Math.round(state.calmHP)}</span>
             </div>
             <div class="meter-track">
@@ -46,7 +46,7 @@ export function renderMeters(container, state) {
         </div>
         <div class="meter">
             <div class="meter-row">
-                <span class="meter-label">Threat Level</span>
+                <span class="meter-label">Wound Up</span>
                 <span class="meter-value" id="threat-value">${Math.round(state.threatLevel)}</span>
             </div>
             <div class="meter-track">
@@ -58,11 +58,11 @@ export function renderMeters(container, state) {
 
 export function renderHud(state) {
     return `
-        <div class="hud-pill" title="Calm HP">
+        <div class="hud-pill" title="Calm">
             <span>💙</span>
             <div class="hud-track"><div class="hud-fill" id="hud-calm-fill" style="width:${state.calmHP}%; background:var(--accent-blue);"></div></div>
         </div>
-        <div class="hud-pill" title="Threat Level">
+        <div class="hud-pill" title="Wound Up">
             <span>⚡</span>
             <div class="hud-track"><div class="hud-fill" id="hud-threat-fill" style="width:${state.threatLevel}%; background:${threatColor(state.threatLevel)};"></div></div>
         </div>

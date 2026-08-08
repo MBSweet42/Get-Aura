@@ -178,7 +178,7 @@ export function questById(id) {
 }
 
 export function tierLabel(tier) {
-    return { common: 'Common Quest', rare: 'Rare Quest', boss: 'Boss Battle' }[tier];
+    return { common: 'Quick Check-in', rare: 'Deeper Check-in', boss: 'Big Reset' }[tier];
 }
 
 export function tierGlow(tier) {

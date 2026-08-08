@@ -9,7 +9,7 @@ export function openItemDiscovery(item, reward, backdrop, onDone) {
                 <p class="creature-name" style="font-size:18px;">${item.name}</p>
                 <p class="quest-desc">${item.blurb}</p>
             </div>
-            <span class="quest-meta" style="text-align:center;">−${reward.threatRelief} Threat · +${reward.calmGain} Calm · +${reward.xpGain} XP</span>
+            <span class="quest-meta" style="text-align:center;">−${reward.threatRelief} Wound Up · +${reward.calmGain} Calm · +${reward.xpGain} XP</span>
             <button class="btn btn-primary btn-block" id="discovery-continue">Add it to my den →</button>
         </div>
     `;

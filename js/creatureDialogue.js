@@ -16,7 +16,7 @@ export function openCreatureDialogue(quest, backdrop, onDone) {
                 <h2 style="margin:10px 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">${quest.title}</h2>
                 <p class="quest-desc">${quest.desc}</p>
             </div>
-            <span class="quest-meta">−${quest.threatRelief} Threat · +${quest.calmGain} Calm · +${quest.xpGain} XP</span>
+            <span class="quest-meta">−${quest.threatRelief} Wound Up · +${quest.calmGain} Calm · +${quest.xpGain} XP</span>
             <button class="btn btn-primary btn-block" id="creature-start">Try it →</button>
             <button class="btn btn-ghost btn-block" id="creature-later">Maybe later</button>
         </div>

@@ -20,7 +20,7 @@ export function openQuestRunner(quest, backdrop, onClose) {
             <div id="qr-stage"></div>
             <ul class="quest-steps" id="qr-steps"></ul>
             <div class="quest-reward">
-                <span>−${quest.threatRelief} Threat</span>
+                <span>−${quest.threatRelief} Wound Up</span>
                 <span>+${quest.calmGain} Calm</span>
                 <span>+${quest.xpGain} XP</span>
             </div>
@@ -108,7 +108,7 @@ export function openQuestRunner(quest, backdrop, onClose) {
                     400
                 );
             } else {
-                showToast(`Quest complete — Threat −${quest.threatRelief}, Calm +${quest.calmGain}, XP +${quest.xpGain}`);
+                showToast(`Check-in complete — Wound Up −${quest.threatRelief}, Calm +${quest.calmGain}, XP +${quest.xpGain}`);
                 setTimeout(() => openReflection(backdrop, () => onClose(completed)), 400);
             }
         } else {

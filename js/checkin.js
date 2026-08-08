@@ -13,7 +13,7 @@ export function openCheckIn(backdrop, onDone) {
         <div class="modal-sheet">
             <div>
                 <h2 style="margin:0 0 4px;font-size:19px;color:var(--text-primary);text-transform:none;letter-spacing:normal;">How wound up do you feel?</h2>
-                <p class="quest-desc">Be honest — this sets your Threat Level and picks the right quest for right now.</p>
+                <p class="quest-desc">Be honest — this tells me how wound up you are, so I can find the right check-in for right now.</p>
             </div>
             <div class="checkin-value" id="ci-value">${value}</div>
             <div style="text-align:center;color:var(--text-secondary);font-size:14px;" id="ci-label">${LABELS[value]}</div>
