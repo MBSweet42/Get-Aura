@@ -2,7 +2,8 @@ import { getState, subscribe, completeQuest, setCareFocus, xpProgress, unlockedS
 import { renderMeters, renderHud, updateHud } from './meters.js';
 import { renderCompanion, updateCompanion } from './companion.js';
 import { renderStreak, renderHistory } from './streak.js';
-import { QUESTS, suggestedQuest, questById, tierGlow } from './quests.js';
+import { QUESTS, SUNRISE_STRETCH, suggestedQuest, questById, tierGlow } from './quests.js';
+import { renderMentorCard, openMentorCheckIn } from './mentor.js';
 import { ITEMS, totalItemCount, CARE_FOCUS_OPTIONS, careFocusById } from './items.js';
 import { openCheckIn } from './checkin.js';
 import { openReflection } from './reflection.js';
@@ -26,6 +27,7 @@ const scenePanel = document.getElementById('scene-panel');
 const sceneBack = document.getElementById('scene-back');
 const sheet = scenePanel;
 let openPlaceId = null;
+let pendingToolCompletion = null;
 
 function placeHeader(id) {
     const place = placeById(id);
@@ -86,8 +88,10 @@ function refreshWorldDynamic() {
 }
 
 function renderQuestsContent() {
+    const state = getState();
     sheet.innerHTML = `
         ${placeHeader('quests')}
+        ${renderMentorCard(state)}
         <p class="quest-desc" style="text-align:center;">Each creature here knows one trick. Tap one to learn it.</p>
         <div class="grove">
             <div class="world-sky">${renderSparkles(10)}</div>
@@ -102,22 +106,59 @@ function renderQuestsContent() {
             openCreatureDialogue(quest, backdrop, () => render());
         });
     });
+
+    sheet.querySelector('#mentor-checkin').addEventListener('click', () => {
+        openMentorCheckIn(backdrop, {
+            onStartSunrise: () => openCreatureDialogue(SUNRISE_STRETCH, backdrop, () => render()),
+            onDone: () => render(),
+        })(getState());
+    });
 }
 
-let selectedTool = 'pattern-break';
+let selectedTool = null;
+
+const ROOM_DECOR = {
+    'pattern-break': '🧩',
+    'thought-popper': '🫧',
+    'color-match': '🎨',
+};
 
 function renderResetContent() {
+    if (!selectedTool) {
+        unmountActiveTool();
+        sheet.innerHTML = `
+            ${placeHeader('reset')}
+            <p class="quest-desc" style="text-align:center;">A quiet place to wander. Step into a room when something calls to you.</p>
+            <div class="room-grid">
+                ${RESET_TOOLS.map(
+                    (t) => `
+                    <button class="room-card" data-tool="${t.id}">
+                        <span class="room-card-icon">${t.emoji}</span>
+                        <span class="room-card-text">
+                            <span class="room-card-name">${t.name}</span>
+                            <span class="room-card-hint">for when ${t.when}</span>
+                        </span>
+                    </button>
+                `
+                ).join('')}
+            </div>
+        `;
+        sheet.querySelectorAll('[data-tool]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                selectedTool = btn.dataset.tool;
+                renderResetContent();
+            });
+        });
+        return;
+    }
+
     const tool = toolById(selectedTool);
 
     sheet.innerHTML = `
         ${placeHeader('reset')}
+        <button class="btn btn-ghost" id="room-leave">← Rooms</button>
         <div class="card">
-            <div class="tool-picker">
-                ${RESET_TOOLS.map(
-                    (t) => `<button class="tool-chip ${t.id === selectedTool ? 'active' : ''}" data-tool="${t.id}">${t.emoji} ${t.name}</button>`
-                ).join('')}
-            </div>
-            <h2 style="margin-top:14px;">${tool.name}</h2>
+            <h2 style="margin-top:0;">${tool.emoji} ${tool.name}</h2>
             <p class="quest-desc">Reach for this when ${tool.when}.</p>
             <p class="quest-desc">${tool.blurb}</p>
         </div>
@@ -135,11 +176,9 @@ function renderResetContent() {
         }
     `;
 
-    sheet.querySelectorAll('[data-tool]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            selectedTool = btn.dataset.tool;
-            renderResetContent();
-        });
+    sheet.querySelector('#room-leave').addEventListener('click', () => {
+        selectedTool = null;
+        renderResetContent();
     });
 
     sheet.querySelectorAll('[data-action]').forEach((btn) => {
@@ -151,12 +190,14 @@ function renderResetContent() {
         const { newItem } = completeQuest({ ...reward, activity: tool.id });
         celebrate();
 
+        // Never pop a covering modal mid-play — keep it to a quiet toast and
+        // save the fuller celebration for when the player actually leaves.
         if (newItem) {
-            setTimeout(() => openItemDiscovery(newItem, reward, backdrop, () => openReflection(backdrop, () => render())), 400);
+            showToast(`✨ Found something for your Cozy Den — check it when you head out`);
         } else {
             showToast(`Nice reset — Threat −${reward.threatRelief}, Calm +${reward.calmGain}, XP +${reward.xpGain}`);
-            setTimeout(() => openReflection(backdrop, () => render()), 400);
         }
+        pendingToolCompletion = { newItem, reward };
     });
 }
 
@@ -325,11 +366,28 @@ function openPlaceScene(id, point) {
 
 function closePlaceScene(point) {
     if (!openPlaceId) return;
+
     if (openPlaceId === 'reset') {
         unmountActiveTool();
         stopSoundscape();
+
+        if (pendingToolCompletion) {
+            const { newItem, reward } = pendingToolCompletion;
+            pendingToolCompletion = null;
+            const afterDiscovery = () => openReflection(backdrop, () => finishCloseScene(point));
+            if (newItem) {
+                openItemDiscovery(newItem, reward, backdrop, afterDiscovery);
+            } else {
+                afterDiscovery();
+            }
+            return;
+        }
     }
 
+    finishCloseScene(point);
+}
+
+function finishCloseScene(point) {
     const kind = transitionForPlace(openPlaceId);
     playTransition(kind, point, () => {
         openPlaceId = null;

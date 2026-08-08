@@ -10,6 +10,7 @@ export const ITEMS = {
     'pattern-break': { emoji: '🧩', name: 'Puzzle Piece', blurb: 'One piece, then the next.' },
     'thought-popper': { emoji: '🫧', name: 'Bubble Jar', blurb: 'Pop, drift, gone.' },
     'color-match': { emoji: '🎨', name: 'Sketchbook', blurb: 'No rules, just color.' },
+    'sunrise-stretch': { emoji: '🌅', name: 'Morning Sun Charm', blurb: 'Earned before the day even starts.' },
 };
 
 export function itemFor(activity) {

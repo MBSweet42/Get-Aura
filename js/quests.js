@@ -131,6 +131,31 @@ export const QUESTS = [
     },
 ];
 
+export const SUNRISE_STRETCH = {
+    id: 'sunrise-stretch',
+    tier: 'common',
+    daily: true,
+    title: 'Sunrise Stretch',
+    desc: 'A quick whole-body wake-up sequence — inspired by the daily radio calisthenics that got Japan moving every morning for a century. No mat, no gear, just movement.',
+    creature: '🧙',
+    creatureName: 'Sage',
+    creatureLine: 'stretches an arm overhead, waiting for you to match',
+    threatRelief: 10,
+    calmGain: 18,
+    xpGain: 22,
+    steps: [
+        { text: 'Reach both arms up to the sky — big stretch, rise onto your toes', seconds: 8 },
+        { text: 'Roll your shoulders back in big, slow circles', seconds: 8 },
+        { text: 'Twist gently side to side, let your arms swing loose', seconds: 10 },
+        { text: 'Reach down toward your toes — as far as feels good', seconds: 8 },
+        { text: 'March in place, knees up high', seconds: 10 },
+        { text: 'Big arm circles — forward, then backward', seconds: 10 },
+        { text: 'Side bend left… then side bend right', seconds: 8 },
+        { text: 'Shake out your whole body — arms, legs, everything', seconds: 8 },
+        { text: 'Finish with one big stretch overhead. Nice.', seconds: 6 },
+    ],
+};
+
 export function tierForThreat(threatLevel) {
     if (threatLevel >= 80) return 'boss';
     if (threatLevel >= 40) return 'rare';
@@ -148,6 +173,7 @@ export function suggestedQuest(threatLevel) {
 }
 
 export function questById(id) {
+    if (id === SUNRISE_STRETCH.id) return SUNRISE_STRETCH;
     return QUESTS.find((q) => q.id === id);
 }
 
